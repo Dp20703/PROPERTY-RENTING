@@ -189,11 +189,10 @@ function ContactForm() {
       <div className="contacts-9 py-5">
         <div className="container py-md-3">
           <div className="d-flex align-items-center justify-content-between">
-            <h4>Make Complaint</h4>
-            <h4>Give Feedback</h4>
           </div>
           <div className="top-map row">
             <div className="map-content-9 col-md-6">
+              <h4>Make Complaint</h4>
               <form onSubmit={handleSubmitComplaint}>
                 <div className="twice-two">
                   <input
@@ -217,19 +216,23 @@ function ContactForm() {
                     required
                   />
                 </div>
+
+
                 <textarea
                   name="complaint"
                   id="complaint"
                   placeholder="Complaint"
                   value={data.complaint}
                   onChange={handleChange}
-                  className="form-control"
+                  className="form-control mb-2 "
+                  rows={6}
                   required
                 />
                 <button type="submit">Register Complaint</button>
               </form>
             </div>
             <div className="map-content-9 col-md-6">
+              <h4>Give Feedback</h4>
               <form onSubmit={handleSubmitFeedback}>
                 <div className="twice-two">
                   <input
