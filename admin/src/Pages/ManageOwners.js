@@ -3,6 +3,7 @@ import Slider from "../Common/Slider";
 import Navigation from "../Common/Navigation";
 import Footer from "../Common/Footer";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 const ManageOwners = () => {
   return (
@@ -44,10 +45,18 @@ function Main() {
   };
 
   // Function to handle Delete action
-  const handleDelete = (ownerId) => {
+  const handleDelete = async (ownerId) => {
     if (window.confirm("Are you sure you want to delete this owner?")) {
-      setOwners(owners.filter((owner) => owner.id !== ownerId));
+      try {
+        await axios.delete(`http://localhost:8000/delete_owner/${ownerId}`);
+        toast.success("Owner deleted");
+        setOwners(owners.filter((owner) => owner._id !== ownerId));
+      } catch (error) {
+        toast.error("Failed to delete owner. Please try again.");
+        console.error("Delete error:", error);
+      }
     }
+
   };
 
   const indexOfLastRecord = currentPage * recordsPerPage;
@@ -90,14 +99,12 @@ function Main() {
                           <th>Owner</th>
                           <th>Email</th>
                           <th>Contact</th>
-                          {/* <th>Properties Owned</th> */}
-                          {/* <th>Status</th> */}
                           <th>Actions</th>
                         </tr>
                       </thead>
                       <tbody>
                         {currentRecords.map((owner, index) => (
-                          <tr key={owner.id}>
+                          <tr key={owner._id}>
                             <td>{index + 1}</td>
                             <td>
                               {/* <img
@@ -115,18 +122,6 @@ function Main() {
                             </td>
                             <td>{owner.email}</td>
                             <td>{owner.phoneNo}</td>
-                            {/* <td>{owner.propertiesOwned}</td> */}
-                            {/* <td>
-                              <span
-                                className={`badge ${
-                                  owner.status === "Active"
-                                    ? "bg-green"
-                                    : "bg-red"
-                                }`}
-                              >
-                                {owner.status}
-                              </span>
-                            </td> */}
                             <td>
                               <button
                                 className="btn btn-xs btn-primary m-1"
@@ -136,7 +131,7 @@ function Main() {
                               </button>
                               <button
                                 className="btn btn-xs btn-danger m-1"
-                                onClick={() => handleDelete(owner.id)}
+                                onClick={() => handleDelete(owner._id)}
                               >
                                 <i className="fa fa-trash" /> Delete
                               </button>
@@ -155,9 +150,8 @@ function Main() {
                         {[...Array(totalPages).keys()].map((page) => (
                           <li
                             key={page}
-                            className={`page-item ${
-                              currentPage === page + 1 ? "active" : ""
-                            }`}
+                            className={`page-item ${currentPage === page + 1 ? "active" : ""
+                              }`}
                             onClick={() => handlePageChange(page + 1)}
                           >
                             <button className="page-link">{page + 1}</button>
@@ -178,12 +172,12 @@ function Main() {
         <div className="modal-overlay" style={{ marginBottom: "70px" }}>
           <div className="modal-content px-5 py-3">
             <h3 className="pb-2">Owner Details</h3>
-            <img
-              src={selectedOwner.avatar}
+            {/* <img
+              src={selectedOwner.profilePic}
               className="rounded-circle mb-3"
               alt="Owner Avatar"
               style={{ width: "80px", height: "80px", objectFit: "cover" }}
-            />
+            /> */}
             <p>
               <strong>ID:</strong> {selectedOwner._id}
             </p>
@@ -197,13 +191,6 @@ function Main() {
             <p>
               <strong>Contact:</strong> {selectedOwner.phoneNo}
             </p>
-            {/* <p>
-              <strong>Properties Owned:</strong> {selectedOwner.propertiesOwned}
-            </p>
-            <p>
-              <strong>Status:</strong> {selectedOwner.status}
-            </p> */}
-
             <button
               className="btn btn-secondary"
               onClick={() => setSelectedOwner(null)}
