@@ -3,6 +3,7 @@ import Slider from "../Common/Slider";
 import Navigation from "../Common/Navigation";
 import Footer from "../Common/Footer";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 const ManageUsers = () => {
   return (
@@ -22,6 +23,7 @@ function Main() {
   const [currentPage, setCurrentPage] = useState(1);
   const recordsPerPage = 5;
 
+  // Fetch user data from the server:
   const getData = async () => {
     try {
       const response = await axios.get("http://localhost:8000/fetch_all_user");
@@ -43,17 +45,26 @@ function Main() {
   };
 
   // Function to handle Delete action
-  const handleDelete = (userId) => {
+  const handleDelete = async (userId) => {
     if (window.confirm("Are you sure you want to delete this user?")) {
-      setUsers(users.filter((user) => user.id !== userId));
+      try {
+        await axios.delete(`http://localhost:8000/delete_user/${userId}`);
+        toast.success("User deleted");
+        setUsers(users.filter((user) => user._id !== userId)); // use `_id` instead of `id`
+      } catch (error) {
+        toast.error("Failed to delete user. Please try again.");
+        console.error("Delete error:", error);
+      }
     }
   };
 
+  // hangle page numbers:
   const indexOfLastRecord = currentPage * recordsPerPage;
   const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
   const currentRecords = users.slice(indexOfFirstRecord, indexOfLastRecord);
   const totalPages = Math.ceil(users.length / recordsPerPage);
 
+  // handle page change:
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
@@ -97,7 +108,7 @@ function Main() {
                         </thead>
                         <tbody>
                           {currentRecords.map((user, index) => (
-                            <tr key={user.id}>
+                            <tr key={user._id}>
                               <td>{index + 1}</td>
                               <td>
                                 {/* <img
@@ -124,7 +135,7 @@ function Main() {
                                 </button>
                                 <button
                                   className="btn btn-xs btn-danger m-1"
-                                  onClick={() => handleDelete(user.id)}
+                                  onClick={() => handleDelete(user._id)}
                                 >
                                   <i className="fa fa-trash" /> Delete
                                 </button>
@@ -144,9 +155,8 @@ function Main() {
                         {[...Array(totalPages).keys()].map((page) => (
                           <li
                             key={page}
-                            className={`page-item ${
-                              currentPage === page + 1 ? "active" : ""
-                            }`}
+                            className={`page-item ${currentPage === page + 1 ? "active" : ""
+                              }`}
                             onClick={() => handlePageChange(page + 1)}
                           >
                             <button className="page-link">{page + 1}</button>

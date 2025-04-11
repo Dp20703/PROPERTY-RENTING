@@ -209,7 +209,7 @@ function ContactForm() {
                     type="email"
                     name="email"
                     id="email"
-                    className="form-control"
+                    className="form-control mb-2"
                     value={data.email}
                     onChange={handleChange}
                     placeholder="Email"
@@ -224,7 +224,7 @@ function ContactForm() {
                   placeholder="Complaint"
                   value={data.complaint}
                   onChange={handleChange}
-                  className="form-control mb-2 "
+                  className="form-control  "
                   rows={6}
                   required
                 />

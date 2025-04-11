@@ -55,6 +55,7 @@ const { getDashboardCounts } = require("./API/getDashboardCounts");
 const jwt = require("jsonwebtoken");
 const { OAuth2Client } = require("google-auth-library");
 const { GoogleUserLogin } = require("./API/UserGoogleLogin");
+const { DeleteUser } = require("./API/deleteUser");
 
 //connecting to database:
 connectDB();
@@ -168,6 +169,7 @@ app.post("/respond_complaint", respond_complaint);
 app.post("/respond_feedback", respond_feedback);
 app.post("/respond_contactus", RespondToContact);
 app.get("/getDashboardCounts", getDashboardCounts);
+app.delete("/delete_user/:id", DeleteUser);
 
 //port:
 const PORT = process.env.PORT || 4000;
